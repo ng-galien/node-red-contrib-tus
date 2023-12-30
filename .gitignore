@@ -4,3 +4,4 @@ rest/
 tmp/
 package-lock.json
 *.sh
+.DS_Store
