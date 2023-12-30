@@ -2,7 +2,10 @@
   "name": "@tus/node-red-tus",
   "version": "1.0.0",
   "description": "TUS server for Node-RED",
-  "repository": "https://github.com/ng-galien/node-red-contrib-tus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ng-galien/node-red-contrib-tus"
+  },
   "scripts": {
     "deploy": "PROJECT_DIR=$(pwd) && cd ~/.node-red && npm install $PROJECT_DIR",
     "test": "mocha test/*.js"
