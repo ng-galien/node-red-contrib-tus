@@ -22,7 +22,7 @@ describe('tus-server Node', function () {
         helper.stopServer(done);
     });
 
-    it('should be loaded', function (done) {
+    it('should be loaded', async function () {
         const flow = [
             {
                 id: "n1",
@@ -31,54 +31,49 @@ describe('tus-server Node', function () {
                 port: 1081,
                 store: "/tmp"
             }];
-        helper.load(tusNode, flow, function () {
-            const n1 = helper.getNode("n1");
-            try {
-                //Storage dir is set to /tmp
-                n1.should.have.property('storageDir', '/tmp');
-                //server is set to a http server
-                n1.should.have.property('server');
-                //Server should be a http.Server
-                n1.server.should.be.an.instanceOf(require('http').Server);
-                done();
-            } catch (err) {
-                done(err);
-            }
-        });
+        await helper.load(tusNode, flow)
+        const n1 = helper.getNode("n1");
+        try {
+            //Node should be loaded
+            n1.should.not.be.null;
+            //Storage dir is set to /tmp
+            n1.should.have.property('storageDir', '/tmp');
+            //server is set to a http server
+            n1.should.have.property('server');
+            const server = n1.server;
+            //Server should be a http.Server
+            server.should.be.an.instanceOf(require('http').Server);
+            return Promise.resolve();
+        } catch (err) {
+            return Promise.reject(err);
+        }
     });
-    it('should be able to upload a file', function (done) {
+
+    it('should be able to upload a file', async function () {
         const flow = [
             {id: "n2", type: "helper"},
             {id: "n1", type: "tus-server", path: "/files", port: 1081, store: "/tmp", wires: [["n2"], []]}
         ];
-        helper.load(tusNode, flow, function () {
+        await helper.load(tusNode, flow);
 
-            const file = "test/sample.txt";
-            var url = "http://localhost:1081/files";
-            const n2 = helper.getNode("n2");
-            n2.on("input", function (msg) {
-                try {
-                    msg.should.have.property('topic');
-                    msg.should.have.property('payload');
-                    msg.payload.should.have.property('id');
-                    msg.payload.should.have.property('metadata');
-                    done();
-                } catch(err) {
-                    done(err);
-                }
-            });
-            uploadFile(url, file, function (err, res) {
-                if (err) {
-                    done(err);
-                } else {
-                    try {
-                        res.should.be.not.null;
-                    } catch (err) {
-                        done(err);
-                    }
-                }
-            });
+        const file = "sample.txt";
+        const url = "http://localhost:1081/files";
+        const n2 = helper.getNode("n2");
+        n2.on("input", function (msg) {
+            try {
+                msg.should.have.property('topic');
+                msg.should.have.property('payload');
+                msg.payload.should.have.property('id');
+                msg.payload.should.have.property('metadata');
+                return Promise.resolve();
+            } catch(err) {
+                return Promise.reject(err);
+            }
         });
+        const res = await uploadFile(url, file);
+        if(res instanceof Error) {
+            return Promise.reject(res);
+        }
+        return Promise.resolve();
     });
 });
-
