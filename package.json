@@ -1,5 +1,5 @@
 {
-  "name": "@tus/node-red-tus",
+  "name": "@ngalien/node-red-contrib-tus",
   "version": "1.0.0",
   "description": "TUS server for Node-RED",
   "repository": {
