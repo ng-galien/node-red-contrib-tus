@@ -4,7 +4,10 @@
   "description": "TUS server for Node-RED",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ng-galien/node-red-contrib-tus"
+    "url": "git+https://github.com/ng-galien/node-red-contrib-tus.git"
+  },
+  "publishConfig": {
+    "@nggalien:registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "deploy": "PROJECT_DIR=$(pwd) && cd ~/.node-red && npm install $PROJECT_DIR",
