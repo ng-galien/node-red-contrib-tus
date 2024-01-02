@@ -106,7 +106,7 @@ module.exports = function(RED) {
                 done();
             }
         });
-        const host = '127.0.0.1';
+        const host = '0.0.0.0';
         node.storageDir = computeStorageDir(RED, config);
         node.debug('storageDir: ' + node.storageDir);
         const app = express()
