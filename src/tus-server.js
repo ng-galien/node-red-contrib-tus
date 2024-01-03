@@ -85,6 +85,11 @@ module.exports = function(RED) {
     function TusServer(config) {
         RED.nodes.createNode(this, config);
         const node = this;
+        node.path = config.path;
+        if(!node.path.startsWith('/')) {
+            node.path = '/' + node.path;
+        }
+        node.port = config.port;
         node.on('close', function (removed, done) {
             let node = this;
             if(node.server) {
@@ -95,6 +100,7 @@ module.exports = function(RED) {
                     done();
                 });
             } else {
+                node.debug('Server not started');
                 done();
             }
         });
@@ -106,25 +112,27 @@ module.exports = function(RED) {
                 done();
             }
         });
-        const host = '0.0.0.0';
         node.storageDir = computeStorageDir(RED, config);
         node.debug('storageDir: ' + node.storageDir);
-        const app = express()
-        const uploadApp = express()
         const tusServer = new Server({
-            path: node.storageDir,
+            path: node.path,
             datastore: new FileStore({directory: config.store}),
         });
         [EVENTS.POST_CREATE, EVENTS.POST_RECEIVE, EVENTS.POST_FINISH, EVENTS.POST_TERMINATE]
             .forEach(event => registerEventListeners(event, node, tusServer));
-
-        uploadApp.all('*', tusServer.handle.bind(tusServer))
-        app.use(config.path, uploadApp)
-        node.server = app.listen(config.port, host, () => {
-            node.status({fill: "green", shape: "dot", text: "connected"});
-            node.debug(`Tus server listening at http://${host}:${config.port}${config.path}`)
+        const app = express();
+        const uploadApp = express();
+        uploadApp.all('*', tusServer.handle.bind(tusServer));
+        app.use(node.path, uploadApp);
+        node.server = app.listen(config.port, function (err) {
+            if (err) {
+                node.error('Error starting server: ' + err);
+                node.status({fill: "red", shape: "dot", text: "Error starting server"});
+            } else {
+                node.debug('Server started on port ' + config.port);
+                node.status({fill: "green", shape: "dot", text: "connected"});
+            }
         });
-
     }
     RED.nodes.registerType("tus-server", TusServer);
 }
