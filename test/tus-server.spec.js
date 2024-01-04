@@ -24,13 +24,7 @@ describe('tus-server Node', function () {
 
     it('should be loaded', async function () {
         const flow = [
-            {
-                id: "n1",
-                type: "tus-server",
-                path: "/files",
-                port: 1081,
-                store: "/tmp"
-            }];
+            {id: "n1", type: "tus-server", path: "/files", store: "/tmp"}];
         await helper.load(tusNode, flow)
         const n1 = helper.getNode("n1");
         try {
@@ -52,12 +46,12 @@ describe('tus-server Node', function () {
     it('should be able to upload a file', async function () {
         const flow = [
             {id: "n2", type: "helper"},
-            {id: "n1", type: "tus-server", path: "/files", port: 1081, store: "/tmp", wires: [["n2"], []]}
+            {id: "n1", type: "tus-server", path: "/files", store: "/tmp", wires: [["n2"], []]}
         ];
         await helper.load(tusNode, flow);
 
         const file = "sample.txt";
-        const url = "http://localhost:1081/files";
+        const url = "http://localhost:1080/files";
         const n2 = helper.getNode("n2");
         n2.on("input", function (msg) {
             try {

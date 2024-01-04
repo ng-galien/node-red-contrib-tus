@@ -4,7 +4,6 @@
         color: '#a6bbcf',
         defaults: {
             path: {value:"",required:true},
-            port: {value:"",required:true,validate:RED.validators.number()},
             store: {value:"",required:true}
         },
         inputs: 1,
@@ -12,14 +11,6 @@
         icon: "font-awesome/fa-server",
         label: function() {
             return "tus-server" + (this.port && this.path ? " [" + this.path + ":" + this.port + "]" : "");
-        },
-        oneditprepare: function() {
-            var that = this;
-            $("#node-input-port-type").typedInput({
-                type:"str",
-                types:["num"],
-                typeField: "#node-input-port-type",
-            })
         },
         inputLabels: "commands",
         outputLabels: ["events", "info"],
@@ -30,11 +21,6 @@
     <div class="form-row">
         <label for="node-input-path"><i class="fa fa-bookmark"></i> Path</label>
         <input type="text" id="node-input-path" placeholder="/files"/>
-    </div>
-    <div class="form-row">
-        <label for="node-input-port"><i class="fa fa-bookmark"></i> Port</label>
-        <input type="text" id="node-input-port" placeholder="1080"/>
-        <input type="hidden" id="node-input-port-type">
     </div>
     <div class="form-row">
         <label for="node-input-store"><i class="fa fa-bookmark"></i> Store</label>

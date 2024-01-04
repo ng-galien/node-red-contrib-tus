@@ -124,7 +124,7 @@ module.exports = function(RED) {
         const uploadApp = express();
         uploadApp.all('*', tusServer.handle.bind(tusServer));
         app.use(node.path, uploadApp);
-        node.server = app.listen(config.port, function (err) {
+        node.server = app.listen(1080, function (err) {
             if (err) {
                 node.error('Error starting server: ' + err);
                 node.status({fill: "red", shape: "dot", text: "Error starting server"});
