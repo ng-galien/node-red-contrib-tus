@@ -2,6 +2,7 @@ const {Server} = require('@tus/server')
 const {FileStore} = require('@tus/file-store')
 const {EVENTS} = require('@tus/server')
 const express = require('express');
+const cors = require('cors')
 /**
  * Register event listeners for the given event and send a message to the first output.
  * The message contains the event name as topic and the data as payload.
@@ -123,6 +124,7 @@ module.exports = function(RED) {
         const app = express();
         const uploadApp = express();
         uploadApp.all('*', tusServer.handle.bind(tusServer));
+        uploadApp.use(cors());
         app.use(node.path, uploadApp);
         node.server = app.listen(1080, function (err) {
             if (err) {
